@@ -42,15 +42,26 @@ public class Echiquier
                     break;
                 case TG:
                 case TD:
-                    tab[x, y] = new Tour(true, x, y, this);
+                    tab[x, y] = new Tour(false, x, y, this);
                     mine.Add(tab[x, y]);
                     break;
 
                 case CG:
                 case CD:
+                    tab[x, y] = new Cavalier(false, x, y, this);
+                    mine.Add(tab[x, y]);
+                    break;
                 case F:
-                case R:
+                    tab[x, y] = new Fou(false, x, y, this);
+                    mine.Add(tab[x, y]);
+                    break;
                 case D:
+                    tab[x, y] = new Dame(false, x, y, this);
+                    mine.Add(tab[x, y]);
+                    break;
+
+                case R:
+                
                     tab[x, y] = new Piece(1, false, x, y, this);
                     break;
 
@@ -65,9 +76,16 @@ public class Echiquier
 
                 case -CG:
                 case -CD:
+                    tab[x, y] = new Cavalier(true, x, y, this);
+                    break;
                 case -F:
-                case -R:
+                    tab[x, y] = new Fou(true, x, y, this);
+                    break;
                 case -D:
+                    tab[x, y] = new Dame(true, x, y, this);
+                    break;
+                case -R:
+                
                     tab[x, y] = new Piece(1, true, x, y, this);
 
                     break;
@@ -200,11 +218,12 @@ public class Tour : Piece
     {
         string s = "";
         //déplacement gauche
-        int i = 0;
-        while ((x - i) > 0)
+        int i = 1;
+        while ((x - i) >= 0)
         {
-            i++;
+            
             //prise ou colision
+
             if (e.tab[x - i, y].getValue() != 0)
             {
                 if(e.tab[x - i, y].getColor()){
@@ -220,13 +239,15 @@ public class Tour : Piece
             {
                 s += this.position + "," + tabCoord[(y) * 8 + x - i] + ';';
             }
-            
+
+            i++;
+
         }
         //déplacement droite
-        i = 0;
-        while ((x + i) < 7)
+        i = 1;
+        while ((x + i) < 8)
         {
-            i++;
+            
             //prise ou colision
             if (e.tab[x + i, y].getValue() != 0)
             {
@@ -244,13 +265,14 @@ public class Tour : Piece
             {
                 s += this.position + "," + tabCoord[(y) * 8 + x + i]+';';
             }
+            i++;
 
         }
         //déplacement bas
-        i = 0;
-        while ((y - i) > 0)
+        i = 1;
+        while ((y - i) >= 0)
         {
-            i++;
+            
             //prise ou colision
             if (e.tab[x , y-i].getValue() != 0)
             {
@@ -268,13 +290,13 @@ public class Tour : Piece
             {
                 s += this.position + "," + tabCoord[(y-i) * 8 + x] + ';';
             }
+            i++;
 
         }
         //déplacement haut
-        i = 0;
-        while ((y + i) < 7)
+        i = 1;
+        while ((y + i) < 8)
         {
-            i++;
             //prise ou colision
             if (e.tab[x, y + i].getValue() != 0)
             {
@@ -292,10 +314,377 @@ public class Tour : Piece
             {
                 s += this.position + "," + tabCoord[(y+i) * 8 + x] + ';';
             }
+            i++;
 
         }
 
         return s;
     }
 
+}
+public class Cavalier : Piece
+{
+    public Cavalier(bool color, int x, int y, Echiquier e) : base(30, color, x, y, e) { }
+    public override string myPlays()
+    {
+        string s = "";
+
+        int[][] offsets = new int[][] {
+        new int[] {-2, 1},
+        new int[] {-1, 2},
+        new int[] {1, 2},
+        new int[] {2, 1},
+        new int[] {2, -1},
+        new int[] {1, -2},
+        new int[] {-1, -2},
+        new int[] {-2, -1}
+    };
+        foreach (int[] o in offsets)
+        {
+
+            int moveX = o[0];
+            int moveY = o[1];
+            if (0 <= x + moveX && x + moveX <= 7 && y + moveY >= 0 && y + moveY <= 7)
+                //Si prise ou colision
+                if (e.tab[x + moveX, y + moveY].getValue() != 0)
+                {
+                    if (e.tab[x + moveX, y + moveY].getColor())
+                    {
+                        s += this.position + "," + tabCoord[(y + moveY) * 8 + x + moveX] + ';';
+                        
+                    }
+                }
+                else
+                {
+                    s += this.position + "," + tabCoord[(y + moveY) * 8 + x + moveX] + ';';
+                    Console.WriteLine("################################");
+                    Console.WriteLine(x + "," + y + " " + (x + moveX) + "," + (y + moveY));
+                    Console.WriteLine("################################");
+
+                }
+        }
+        return s;
+    }
+}
+public class Fou : Piece
+{
+    public Fou(bool color, int x, int y, Echiquier e) : base(30, color, x, y, e) { }
+    public override string myPlays()
+    {
+        string s = "";
+        //déplacement gauche/haut
+        int i = 1;
+        while ((x - i) >= 0 && (y - i) >= 0)
+        {
+
+            //prise ou colision
+
+            if (e.tab[x - i, y-i].getValue() != 0)
+            {
+                if (e.tab[x - i, y-i].getColor())
+                {
+                    s += this.position + "," + tabCoord[(y-i) * 8 + x - i] + ';';
+                    break;
+                }
+                else
+                {
+                    break;
+                }
+            }
+            else
+            {
+                s += this.position + "," + tabCoord[(y-i) * 8 + x - i] + ';';
+            }
+
+            i++;
+
+        }
+        //déplacement droite/bas
+        i = 1;
+        while ((x + i) < 8 && (y + i) < 8)
+        {
+
+            //prise ou colision
+            if (e.tab[x + i, y+i].getValue() != 0)
+            {
+                if (e.tab[x + i, y+i].getColor())
+                {
+                    s += this.position + "," + tabCoord[(y+i) * 8 + x + i] + ';';
+                    break;
+                }
+                else
+                {
+                    break;
+                }
+            }
+            else
+            {
+                s += this.position + "," + tabCoord[(y+i) * 8 + x + i] + ';';
+            }
+            i++;
+
+        }
+        //déplacement haut/droite
+        i = 1;
+        while ((y - i) >= 0 && (x + i) < 8)
+        {
+
+            //prise ou colision
+            if (e.tab[x+i, y - i].getValue() != 0)
+            {
+                if (e.tab[x+i, y - i].getColor())
+                {
+                    s += this.position + "," + tabCoord[(y - i) * 8 + x+i] + ';';
+                    break;
+                }
+                else
+                {
+                    break;
+                }
+            }
+            else
+            {
+                s += this.position + "," + tabCoord[(y - i) * 8 + x+i] + ';';
+            }
+            i++;
+
+        }
+        //déplacement bas gauche
+        i = 1;
+        while ((y + i) < 8 && (x - i) >= 0)
+        {
+            //prise ou colision
+            if (e.tab[x-i, y + i].getValue() != 0)
+            {
+                if (e.tab[x, y + i].getColor())
+                {
+                    s += this.position + "," + tabCoord[(y + i) * 8 + x-i] + ';';
+                    break;
+                }
+                else
+                {
+                    break;
+                }
+            }
+            else
+            {
+                s += this.position + "," + tabCoord[(y + i) * 8 + x-i] + ';';
+            }
+            i++;
+
+        }
+
+        return s;
+    }
+}
+public class Dame : Piece
+{
+    public Dame(bool color, int x, int y, Echiquier e) : base(90, color, x, y, e) { }
+    public override string myPlays()
+    {
+        string s = "";
+        //déplacement gauche/haut
+        int i = 1;
+        while ((x - i) >= 0 && (y - i) >= 0)
+        {
+
+            //prise ou colision
+
+            if (e.tab[x - i, y - i].getValue() != 0)
+            {
+                if (e.tab[x - i, y - i].getColor())
+                {
+                    s += this.position + "," + tabCoord[(y - i) * 8 + x - i] + ';';
+                    break;
+                }
+                else
+                {
+                    break;
+                }
+            }
+            else
+            {
+                s += this.position + "," + tabCoord[(y - i) * 8 + x - i] + ';';
+            }
+
+            i++;
+
+        }
+        //déplacement droite/bas
+        i = 1;
+        while ((x + i) < 8 && (y + i) < 8)
+        {
+
+            //prise ou colision
+            if (e.tab[x + i, y + i].getValue() != 0)
+            {
+                if (e.tab[x + i, y + i].getColor())
+                {
+                    s += this.position + "," + tabCoord[(y + i) * 8 + x + i] + ';';
+                    break;
+                }
+                else
+                {
+                    break;
+                }
+            }
+            else
+            {
+                s += this.position + "," + tabCoord[(y + i) * 8 + x + i] + ';';
+            }
+            i++;
+
+        }
+        //déplacement haut/droite
+        i = 1;
+        while ((y - i) >= 0 && (x + i) < 8)
+        {
+
+            //prise ou colision
+            if (e.tab[x + i, y - i].getValue() != 0)
+            {
+                if (e.tab[x + i, y - i].getColor())
+                {
+                    s += this.position + "," + tabCoord[(y - i) * 8 + x + i] + ';';
+                    break;
+                }
+                else
+                {
+                    break;
+                }
+            }
+            else
+            {
+                s += this.position + "," + tabCoord[(y - i) * 8 + x + i] + ';';
+            }
+            i++;
+
+        }
+        //déplacement bas gauche
+        i = 1;
+        while ((y + i) < 8 && (x - i) >= 0)
+        {
+            //prise ou colision
+            if (e.tab[x - i, y + i].getValue() != 0)
+            {
+                if (e.tab[x, y + i].getColor())
+                {
+                    s += this.position + "," + tabCoord[(y + i) * 8 + x - i] + ';';
+                    break;
+                }
+                else
+                {
+                    break;
+                }
+            }
+            else
+            {
+                s += this.position + "," + tabCoord[(y + i) * 8 + x - i] + ';';
+            }
+            i++;
+
+        }
+        i = 1;
+        while ((x - i) >= 0)
+        {
+
+            //prise ou colision
+
+            if (e.tab[x - i, y].getValue() != 0)
+            {
+                if (e.tab[x - i, y].getColor())
+                {
+                    s += this.position + "," + tabCoord[(y) * 8 + x - i] + ';';
+                    break;
+                }
+                else
+                {
+                    break;
+                }
+            }
+            else
+            {
+                s += this.position + "," + tabCoord[(y) * 8 + x - i] + ';';
+            }
+
+            i++;
+
+        }
+        //déplacement droite
+        i = 1;
+        while ((x + i) < 8)
+        {
+
+            //prise ou colision
+            if (e.tab[x + i, y].getValue() != 0)
+            {
+                if (e.tab[x + i, y].getColor())
+                {
+                    s += this.position + "," + tabCoord[(y) * 8 + x + i] + ';';
+                    break;
+                }
+                else
+                {
+                    break;
+                }
+            }
+            else
+            {
+                s += this.position + "," + tabCoord[(y) * 8 + x + i] + ';';
+            }
+            i++;
+
+        }
+        //déplacement bas
+        i = 1;
+        while ((y - i) >= 0)
+        {
+
+            //prise ou colision
+            if (e.tab[x, y - i].getValue() != 0)
+            {
+                if (e.tab[x, y - i].getColor())
+                {
+                    s += this.position + "," + tabCoord[(y - i) * 8 + x] + ';';
+                    break;
+                }
+                else
+                {
+                    break;
+                }
+            }
+            else
+            {
+                s += this.position + "," + tabCoord[(y - i) * 8 + x] + ';';
+            }
+            i++;
+
+        }
+        //déplacement haut
+        i = 1;
+        while ((y + i) < 8)
+        {
+            //prise ou colision
+            if (e.tab[x, y + i].getValue() != 0)
+            {
+                if (e.tab[x, y + i].getColor())
+                {
+                    s += this.position + "," + tabCoord[(y + i) * 8 + x] + ';';
+                    break;
+                }
+                else
+                {
+                    break;
+                }
+            }
+            else
+            {
+                s += this.position + "," + tabCoord[(y + i) * 8 + x] + ';';
+            }
+            i++;
+
+        }
+
+        return s;
+    }
 }
