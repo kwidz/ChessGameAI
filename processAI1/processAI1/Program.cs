@@ -99,6 +99,10 @@ namespace processAI1
                                 //coord[0] = mesPieces[rnd.Next(mesPieces.Count)];
                                 
                                 string move = allTurnList[rnd.Next(allTurnList.Count)];
+                                while (!move.Contains(','))
+                                {
+                                    move = allTurnList[rnd.Next(allTurnList.Count)];
+                                }
                                 Console.WriteLine(move);
                                 coord[0] = move.Split(',').ToList()[0];
                                 coord[1] = move.Split(',').ToList()[1];
