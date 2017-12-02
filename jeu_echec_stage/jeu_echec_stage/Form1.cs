@@ -22,7 +22,7 @@ namespace jeu_echec_stage
         private const int NB_CASE_LARGE = 8; //Nombre de cases en largeur ou longueur
         private const int TAILLE_BTN = 60; //Taille d'une case
 
-        private const String IMG_PATH = "D:\\Logiciels développés\\[2017-06-30] - Échecs\\jeu_echec_stage\\images\\";
+        private const String IMG_PATH = "C:\\Users\\kwidz\\Desktop\\ChessGameAI\\jeu_echec_stage\\images\\";
 
         private Button[] plateau; //Tableau de bouton qui représente l'échiquier
         private Echiquier ech = Echiquier.Instance(); //Instance de la classe Echiquier pour utiliser les méthodes de la classe

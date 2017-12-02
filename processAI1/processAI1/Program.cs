@@ -63,6 +63,7 @@ namespace processAI1
                                 /***************************************** ECRIRE LE CODE DE L'IA *************************************/
                                 /******************************************************************************************************/
 
+                                
                                 List<String> mesPieces = new List<String>();
                                 for (int i = 0; i < tabVal.Length; i++)
                                 {
@@ -73,14 +74,37 @@ namespace processAI1
                                 for (int i = 0; i < tabVal.Length; i++)
                                 {
                                     if (tabVal[i] <= 0) reste.Add(tabCoord[i]);
+                                    
                                 }
 
+                                //affichage du plateau
+                                for(int i = 0; i < tabVal.Length; i++)
+                                {
+                                    Console.Write(tabVal[i]+" ");
+                                    if (i % 8 == 0)
+                                        Console.WriteLine();
+                                }
+
+                                Echiquier e = new Echiquier(tabVal);
+                                string allTurn = e.playable();
+                                
+                                allTurn = allTurn.Remove(allTurn.Length - 1, 1);
+                                Console.WriteLine(allTurn);
+                                allTurn = allTurn.Replace(";;", ";");
+                                allTurn = allTurn.TrimStart(';');
+                                
+                                List<string>allTurnList = allTurn.Split(';').ToList();
+
                                 Random rnd = new Random();
-                                coord[0] = mesPieces[rnd.Next(mesPieces.Count)];
-                                //coord[0] = "b7";
-                                //coord[1] = "b8";
-                                coord[1] = tabCoord[rnd.Next(reste.Count)];
-                                //coord[2] = "P";
+                                //coord[0] = mesPieces[rnd.Next(mesPieces.Count)];
+                                
+                                string move = allTurnList[rnd.Next(allTurnList.Count)];
+                                Console.WriteLine(move);
+                                coord[0] = move.Split(',').ToList()[0];
+                                coord[1] = move.Split(',').ToList()[1];
+                                //coord[1] = tabCoord[rnd.Next(reste.Count)];
+                                //coord[2] = "P
+                                
 
                                 
                                 /********************************************************************************************************/
@@ -93,8 +117,11 @@ namespace processAI1
                                     for (int i = 1; i < coord.Length; i++)
                                     {
                                         value += "," + coord[i];
+                                        
                                     }
+                                    
                                     byte[] Buffer = ASCIIEncoding.ASCII.GetBytes(value);
+                                    Console.WriteLine(value);
                                     accessor.Write(0, (ushort)Buffer.Length);
                                     accessor.WriteArray(0 + 2, Buffer, 0, Buffer.Length);
                                 }
