@@ -30,7 +30,7 @@ public class Echiquier
 
     public Piece[,] tab;
     List<Piece> mine = new List<Piece>();
-    List<String> coups = new List<string>();
+    public List<Coups> LesCoups = new List<Coups>();
 
     public Echiquier() { }
 
@@ -108,17 +108,14 @@ public class Echiquier
         }
         Console.WriteLine(mine.Count);
 	}
-    public string playable()
+    public List<Coups> playable()
     {
-        string allPayableTurns = "";
         foreach(Piece p in mine)
         {
 
-            string tmp = p.myPlays();
-            if(tmp!="")
-                allPayableTurns += tmp + ";";
+            p.myPlays();
         }
-        return allPayableTurns;
+            return LesCoups;
     }
 }
 public class EchiquierNoir : Echiquier
@@ -132,28 +129,29 @@ public class EchiquierNoir : Echiquier
     private const int F = 4; //fou
     private const int D = 5; //dame
     private const int R = 6; //roi
-    public String[] tabCoord = new string[] { "h1","g1","f1","e1","d1","c1","b1","a1",
-                                                   "h2","g2","f2","e2","d2","c2","b2","a2",
-                                                   "h3","g3","f3","e3","d3","c3","b3","a3",
-                                                   "h4","g4","f4","e4","d4","c4","b4","a4",
-                                                   "h5","g5","f5","e5","d5","c5","b5","a5",
-                                                   "h6","g6","f6","e6","d6","c6","b6","a6",
-                                                   "h7","g7","f7","e7","d7","c7","b7","a7",
-                                                   "h8","g8","f8","e8","d8","c8","b8","a8", };
+    public String[] tabCoord = new string[] { "a8","b8","c8","d8","e8","f8","g8","h8",
+                                                   "a7","b7","c7","d7","e7","f7","g7","h7",
+                                                   "a6","b6","c6","d6","e6","f6","g6","h6",
+                                                   "a5","b5","c5","d5","e5","f5","g5","h5",
+                                                   "a4","b4","c4","d4","e4","f4","g4","h4",
+                                                   "a3","b3","c3","d3","e3","f3","g3","h3",
+                                                   "a2","b2","c2","d2","e2","f2","g2","h2",
+                                                   "a1","b1","c1","d1","e1","f1","g1","h1" };
 
 
     public Piece[,] tab;
     List<Piece> mine = new List<Piece>();
-    List<String> coups = new List<string>();
+    List<Coups> Lescoups = new List<Coups>();
 
-    public  EchiquierNoir(int[] tabVal) :base()
+
+    public EchiquierNoir(int[] tabVal) :base()
     {
         tab = new Piece[8, 8];
-        int j = 0;
-        for (int i = tabVal.Length; i >=0 ; i--,j++)
+
+        for (int i = 0; i < tabVal.Length; i++)
         {
-            int y = j >> 3; //optimisation
-            int x = (j & (8 - 1));
+            int y = i >> 3; //optimisation
+            int x = (i & (8 - 1));
             //match all white pawns
             switch (tabVal[i])
             {
@@ -220,17 +218,14 @@ public class EchiquierNoir : Echiquier
         }
         Console.WriteLine(mine.Count);
     }
-    public string playable()
+    public List<Coups> playable()
     {
-        string allPayableTurns = "";
         foreach (Piece p in mine)
         {
 
-            string tmp = p.myPlays();
-            if (tmp != "")
-                allPayableTurns += tmp + ";";
+            p.myPlays();
         }
-        return allPayableTurns;
+        return LesCoups;
     }
 }
 
@@ -273,10 +268,9 @@ public class Piece
         this.e = e;
         this.y = y;
     }
-    public virtual string myPlays()
+    public virtual void myPlays()
     {
-        string s = "";
-        return s;
+        
     }
     public bool getColor()
     {
@@ -302,20 +296,22 @@ public class Pion : Piece
         
     }
     //Retourne tous les mouvements possible d'un pion 
-    public override string myPlays()
+    public override void myPlays()
     {
         
         if (y > 0 ) {
             Console.WriteLine(x+","+y);
-            string s ="";
 
-            if (e.tab[x,y-1].getValue()==0) //pion vers le haut
-                s += this.position+ "," + tabCoord[(y - 1 )* 8 + x];
+
+            if (e.tab[x, y - 1].getValue() == 0) //pion vers le haut
+                e.LesCoups.Add(new Coups(this.position, tabCoord[(y - 1) * 8 + x], (e.tab[x, y - 1].getValue())));
+                
             try
             {
                 if (e.tab[x - 1, y - 1].getColor() && e.tab[x - 1, y - 1].getValue() > 0)//prise vers la gauche
                 {
-                    s += ";" + this.position + ',' + tabCoord[(y - 1 )* 8 + x - 1];
+                    e.LesCoups.Add(new Coups(this.position, tabCoord[(y - 1) * 8 + x-1], (e.tab[x-1, y - 1].getValue())));
+                    
             }
             }
             catch (Exception e) { }
@@ -323,13 +319,13 @@ public class Pion : Piece
             {
                 if (e.tab[x + 1, y - 1].getColor()&& e.tab[x + 1, y - 1].getValue()>0)//prise vers la droite
                 {
-                    s += ";" + this.position + ',' + tabCoord[(y - 1 )* 8 + x + 1];
+                    e.LesCoups.Add(new Coups(this.position, tabCoord[(y - 1) * 8 + x+1], (e.tab[x+1, y - 1].getValue())));
                 }
             }
             catch (Exception e) { }
-            return s;
+            
         }
-        return "";
+       
     }
 }
 public class PionNoir : Piece
@@ -339,7 +335,7 @@ public class PionNoir : Piece
 
     }
     //Retourne tous les mouvements possible d'un pion 
-    public override string myPlays()
+    public override void myPlays()
     {
 
         if (y < 7)
@@ -348,12 +344,12 @@ public class PionNoir : Piece
             string s = "";
 
             if (e.tab[x, y + 1].getValue() == 0) //pion vers le haut
-                s += this.position + "," + tabCoord[(y + 1) * 8 + x];
+                e.LesCoups.Add(new Coups(this.position, tabCoord[(y + 1) * 8 + x], (e.tab[x, y + 1].getValue())));
             try
             {
                 if (e.tab[x - 1, y + 1].getColor() && e.tab[x - 1, y + 1].getValue() > 0)//prise vers la gauche
                 {
-                    s += ";" + this.position + ',' + tabCoord[(y + 1) * 8 + x - 1];
+                    e.LesCoups.Add(new Coups(this.position, tabCoord[(y + 1) * 8 + x-1], (e.tab[x-1, y + 1].getValue())));
                 }
             }
             catch (Exception e) { }
@@ -361,13 +357,13 @@ public class PionNoir : Piece
             {
                 if (e.tab[x + 1, y + 1].getColor() && e.tab[x + 1, y + 1].getValue() > 0)//prise vers la droite
                 {
-                    s += ";" + this.position + ',' + tabCoord[(y - 1) * 8 + x + 1];
+                    e.LesCoups.Add(new Coups(this.position, tabCoord[(y+ 1) * 8 + x+1], (e.tab[x+1, y +1].getValue())));
                 }
             }
             catch (Exception e) { }
-            return s;
+            
         }
-        return "";
+        
     }
 }
 
@@ -375,9 +371,9 @@ public class Tour : Piece
 {
     public Tour(bool color, int x, int y, Echiquier e): base(50, color, x, y, e) { }
 
-    public override string myPlays()
+    public override void myPlays()
     {
-        string s = "";
+        
         //déplacement gauche
         int i = 1;
         while ((x - i) >= 0)
@@ -388,7 +384,7 @@ public class Tour : Piece
             if (e.tab[x - i, y].getValue() != 0)
             {
                 if(e.tab[x - i, y].getColor()){
-                    s += this.position + "," + tabCoord[(y) * 8 + x - i] + ';';
+                    e.LesCoups.Add(new Coups(this.position, tabCoord[(y) * 8 + x-i], (e.tab[x-i, y].getValue())));
                     break;
                 }
                 else
@@ -398,7 +394,7 @@ public class Tour : Piece
             }
             else
             {
-                s += this.position + "," + tabCoord[(y) * 8 + x - i] + ';';
+                e.LesCoups.Add(new Coups(this.position, tabCoord[(y) * 8 + x-i], (e.tab[x-i, y].getValue())));
             }
 
             i++;
@@ -414,7 +410,7 @@ public class Tour : Piece
             {
                 if (e.tab[x + i, y].getColor())
                 {
-                    s += this.position + "," + tabCoord[(y) * 8 + x + i] + ';';
+                    e.LesCoups.Add(new Coups(this.position, tabCoord[(y) * 8 + x+i], (e.tab[x+i, y].getValue())));
                     break;
                 }
                 else
@@ -424,7 +420,7 @@ public class Tour : Piece
             }
             else
             {
-                s += this.position + "," + tabCoord[(y) * 8 + x + i]+';';
+                e.LesCoups.Add(new Coups(this.position, tabCoord[(y) * 8 + x + i], (e.tab[x + i, y].getValue())));
             }
             i++;
 
@@ -439,7 +435,7 @@ public class Tour : Piece
             {
                 if (e.tab[x, y-i].getColor())
                 {
-                    s += this.position + "," + tabCoord[(y-i) * 8 + x] + ';';
+                    e.LesCoups.Add(new Coups(this.position, tabCoord[(y-i) * 8 + x], (e.tab[x, y-i].getValue())));
                     break;
                 }
                 else
@@ -449,7 +445,8 @@ public class Tour : Piece
             }
             else
             {
-                s += this.position + "," + tabCoord[(y-i) * 8 + x] + ';';
+                e.LesCoups.Add(new Coups(this.position, tabCoord[(y - i) * 8 + x], (e.tab[x, y - i].getValue())));
+
             }
             i++;
 
@@ -463,7 +460,8 @@ public class Tour : Piece
             {
                 if (e.tab[x, y + i].getColor())
                 {
-                    s += this.position + "," + tabCoord[(y + i) * 8 + x] + ';';
+                    e.LesCoups.Add(new Coups(this.position, tabCoord[(y + i) * 8 + x], (e.tab[x, y + i].getValue())));
+
                     break;
                 }
                 else
@@ -473,20 +471,20 @@ public class Tour : Piece
             }
             else
             {
-                s += this.position + "," + tabCoord[(y+i) * 8 + x] + ';';
+                e.LesCoups.Add(new Coups(this.position, tabCoord[(y + i) * 8 + x], (e.tab[x, y + i].getValue())));
             }
             i++;
 
         }
 
-        return s;
+      
     }
 
 }
 public class Cavalier : Piece
 {
     public Cavalier(bool color, int x, int y, Echiquier e) : base(30, color, x, y, e) { }
-    public override string myPlays()
+    public override void myPlays()
     {
         string s = "";
 
@@ -511,28 +509,26 @@ public class Cavalier : Piece
                 {
                     if (e.tab[x + moveX, y + moveY].getColor())
                     {
-                        s += this.position + "," + tabCoord[(y + moveY) * 8 + x + moveX] + ';';
-                        
+                        e.LesCoups.Add(new Coups(this.position, tabCoord[(y + moveY) * 8 + x+moveX], (e.tab[x+moveX, y +moveY].getValue())));
+
                     }
                 }
                 else
                 {
-                    s += this.position + "," + tabCoord[(y + moveY) * 8 + x + moveX] + ';';
-                    Console.WriteLine("################################");
-                    Console.WriteLine(x + "," + y + " " + (x + moveX) + "," + (y + moveY));
-                    Console.WriteLine("################################");
+                    e.LesCoups.Add(new Coups(this.position, tabCoord[(y + moveY) * 8 + x + moveX], (e.tab[x + moveX, y + moveY].getValue())));
+                    
 
                 }
         }
-        return s;
+        
     }
 }
 public class Fou : Piece
 {
     public Fou(bool color, int x, int y, Echiquier e) : base(30, color, x, y, e) { }
-    public override string myPlays()
+    public override void myPlays()
     {
-        string s = "";
+        
         //déplacement gauche/haut
         int i = 1;
         while ((x - i) >= 0 && (y - i) >= 0)
@@ -544,7 +540,7 @@ public class Fou : Piece
             {
                 if (e.tab[x - i, y-i].getColor())
                 {
-                    s += this.position + "," + tabCoord[(y-i) * 8 + x - i] + ';';
+                    e.LesCoups.Add(new Coups(this.position, tabCoord[(y -i) * 8 + x -i], (e.tab[x -i, y -i].getValue())));
                     break;
                 }
                 else
@@ -554,7 +550,7 @@ public class Fou : Piece
             }
             else
             {
-                s += this.position + "," + tabCoord[(y-i) * 8 + x - i] + ';';
+                e.LesCoups.Add(new Coups(this.position, tabCoord[(y -i) * 8 + x - i], (e.tab[x - i, y - i].getValue())));
             }
 
             i++;
@@ -570,7 +566,7 @@ public class Fou : Piece
             {
                 if (e.tab[x + i, y+i].getColor())
                 {
-                    s += this.position + "," + tabCoord[(y+i) * 8 + x + i] + ';';
+                    e.LesCoups.Add(new Coups(this.position, tabCoord[(y + i) * 8 + x + i], (e.tab[x + i, y + i].getValue())));
                     break;
                 }
                 else
@@ -580,7 +576,7 @@ public class Fou : Piece
             }
             else
             {
-                s += this.position + "," + tabCoord[(y+i) * 8 + x + i] + ';';
+                e.LesCoups.Add(new Coups(this.position, tabCoord[(y + i) * 8 + x + i], (e.tab[x + i, y + i].getValue())));
             }
             i++;
 
@@ -595,7 +591,7 @@ public class Fou : Piece
             {
                 if (e.tab[x+i, y - i].getColor())
                 {
-                    s += this.position + "," + tabCoord[(y - i) * 8 + x+i] + ';';
+                    e.LesCoups.Add(new Coups(this.position, tabCoord[(y- i) * 8 + x + i], (e.tab[x + i, y - i].getValue())));
                     break;
                 }
                 else
@@ -605,7 +601,7 @@ public class Fou : Piece
             }
             else
             {
-                s += this.position + "," + tabCoord[(y - i) * 8 + x+i] + ';';
+                e.LesCoups.Add(new Coups(this.position, tabCoord[(y - i) * 8 + x + i], (e.tab[x + i, y - i].getValue())));
             }
             i++;
 
@@ -617,9 +613,9 @@ public class Fou : Piece
             //prise ou colision
             if (e.tab[x-i, y + i].getValue() != 0)
             {
-                if (e.tab[x, y + i].getColor())
+                if (e.tab[x-i, y + i].getColor())
                 {
-                    s += this.position + "," + tabCoord[(y + i) * 8 + x-i] + ';';
+                    e.LesCoups.Add(new Coups(this.position, tabCoord[(y + i) * 8 + x - i], (e.tab[x - i, y + i].getValue())));
                     break;
                 }
                 else
@@ -629,123 +625,21 @@ public class Fou : Piece
             }
             else
             {
-                s += this.position + "," + tabCoord[(y + i) * 8 + x-i] + ';';
+                e.LesCoups.Add(new Coups(this.position, tabCoord[(y + i) * 8 + x - i], (e.tab[x - i, y + i].getValue())));
             }
             i++;
 
         }
 
-        return s;
     }
 }
 public class Dame : Piece
 {
     public Dame(bool color, int x, int y, Echiquier e) : base(90, color, x, y, e) { }
-    public override string myPlays()
+    public override void myPlays()
     {
-        string s = "";
-        //déplacement gauche/haut
+        //déplacement gauche
         int i = 1;
-        while ((x - i) >= 0 && (y - i) >= 0)
-        {
-
-            //prise ou colision
-
-            if (e.tab[x - i, y - i].getValue() != 0)
-            {
-                if (e.tab[x - i, y - i].getColor())
-                {
-                    s += this.position + "," + tabCoord[(y - i) * 8 + x - i] + ';';
-                    break;
-                }
-                else
-                {
-                    break;
-                }
-            }
-            else
-            {
-                s += this.position + "," + tabCoord[(y - i) * 8 + x - i] + ';';
-            }
-
-            i++;
-
-        }
-        //déplacement droite/bas
-        i = 1;
-        while ((x + i) < 8 && (y + i) < 8)
-        {
-
-            //prise ou colision
-            if (e.tab[x + i, y + i].getValue() != 0)
-            {
-                if (e.tab[x + i, y + i].getColor())
-                {
-                    s += this.position + "," + tabCoord[(y + i) * 8 + x + i] + ';';
-                    break;
-                }
-                else
-                {
-                    break;
-                }
-            }
-            else
-            {
-                s += this.position + "," + tabCoord[(y + i) * 8 + x + i] + ';';
-            }
-            i++;
-
-        }
-        //déplacement haut/droite
-        i = 1;
-        while ((y - i) >= 0 && (x + i) < 8)
-        {
-
-            //prise ou colision
-            if (e.tab[x + i, y - i].getValue() != 0)
-            {
-                if (e.tab[x + i, y - i].getColor())
-                {
-                    s += this.position + "," + tabCoord[(y - i) * 8 + x + i] + ';';
-                    break;
-                }
-                else
-                {
-                    break;
-                }
-            }
-            else
-            {
-                s += this.position + "," + tabCoord[(y - i) * 8 + x + i] + ';';
-            }
-            i++;
-
-        }
-        //déplacement bas gauche
-        i = 1;
-        while ((y + i) < 8 && (x - i) >= 0)
-        {
-            //prise ou colision
-            if (e.tab[x - i, y + i].getValue() != 0)
-            {
-                if (e.tab[x, y + i].getColor())
-                {
-                    s += this.position + "," + tabCoord[(y + i) * 8 + x - i] + ';';
-                    break;
-                }
-                else
-                {
-                    break;
-                }
-            }
-            else
-            {
-                s += this.position + "," + tabCoord[(y + i) * 8 + x - i] + ';';
-            }
-            i++;
-
-        }
-        i = 1;
         while ((x - i) >= 0)
         {
 
@@ -755,7 +649,7 @@ public class Dame : Piece
             {
                 if (e.tab[x - i, y].getColor())
                 {
-                    s += this.position + "," + tabCoord[(y) * 8 + x - i] + ';';
+                    e.LesCoups.Add(new Coups(this.position, tabCoord[(y) * 8 + x - i], (e.tab[x - i, y].getValue())));
                     break;
                 }
                 else
@@ -765,7 +659,7 @@ public class Dame : Piece
             }
             else
             {
-                s += this.position + "," + tabCoord[(y) * 8 + x - i] + ';';
+                e.LesCoups.Add(new Coups(this.position, tabCoord[(y) * 8 + x - i], (e.tab[x - i, y].getValue())));
             }
 
             i++;
@@ -781,7 +675,7 @@ public class Dame : Piece
             {
                 if (e.tab[x + i, y].getColor())
                 {
-                    s += this.position + "," + tabCoord[(y) * 8 + x + i] + ';';
+                    e.LesCoups.Add(new Coups(this.position, tabCoord[(y) * 8 + x + i], (e.tab[x + i, y].getValue())));
                     break;
                 }
                 else
@@ -791,7 +685,7 @@ public class Dame : Piece
             }
             else
             {
-                s += this.position + "," + tabCoord[(y) * 8 + x + i] + ';';
+                e.LesCoups.Add(new Coups(this.position, tabCoord[(y) * 8 + x + i], (e.tab[x + i, y].getValue())));
             }
             i++;
 
@@ -806,7 +700,7 @@ public class Dame : Piece
             {
                 if (e.tab[x, y - i].getColor())
                 {
-                    s += this.position + "," + tabCoord[(y - i) * 8 + x] + ';';
+                    e.LesCoups.Add(new Coups(this.position, tabCoord[(y - i) * 8 + x], (e.tab[x, y - i].getValue())));
                     break;
                 }
                 else
@@ -816,7 +710,8 @@ public class Dame : Piece
             }
             else
             {
-                s += this.position + "," + tabCoord[(y - i) * 8 + x] + ';';
+                e.LesCoups.Add(new Coups(this.position, tabCoord[(y - i) * 8 + x], (e.tab[x, y - i].getValue())));
+
             }
             i++;
 
@@ -830,7 +725,8 @@ public class Dame : Piece
             {
                 if (e.tab[x, y + i].getColor())
                 {
-                    s += this.position + "," + tabCoord[(y + i) * 8 + x] + ';';
+                    e.LesCoups.Add(new Coups(this.position, tabCoord[(y + i) * 8 + x], (e.tab[x, y + i].getValue())));
+
                     break;
                 }
                 else
@@ -840,20 +736,119 @@ public class Dame : Piece
             }
             else
             {
-                s += this.position + "," + tabCoord[(y + i) * 8 + x] + ';';
+                e.LesCoups.Add(new Coups(this.position, tabCoord[(y + i) * 8 + x], (e.tab[x, y + i].getValue())));
             }
             i++;
 
         }
+        //déplacement gauche/haut
+        i = 1;
+        while ((x - i) >= 0 && (y - i) >= 0)
+        {
 
-        return s;
+            //prise ou colision
+
+            if (e.tab[x - i, y - i].getValue() != 0)
+            {
+                if (e.tab[x - i, y - i].getColor())
+                {
+                    e.LesCoups.Add(new Coups(this.position, tabCoord[(y - i) * 8 + x - i], (e.tab[x - i, y - i].getValue())));
+                    break;
+                }
+                else
+                {
+                    break;
+                }
+            }
+            else
+            {
+                e.LesCoups.Add(new Coups(this.position, tabCoord[(y - i) * 8 + x - i], (e.tab[x - i, y - i].getValue())));
+            }
+
+            i++;
+
+        }
+        //déplacement droite/bas
+        i = 1;
+        while ((x + i) < 8 && (y + i) < 8)
+        {
+
+            //prise ou colision
+            if (e.tab[x + i, y + i].getValue() != 0)
+            {
+                if (e.tab[x + i, y + i].getColor())
+                {
+                    e.LesCoups.Add(new Coups(this.position, tabCoord[(y + i) * 8 + x + i], (e.tab[x + i, y + i].getValue())));
+                    break;
+                }
+                else
+                {
+                    break;
+                }
+            }
+            else
+            {
+                e.LesCoups.Add(new Coups(this.position, tabCoord[(y + i) * 8 + x + i], (e.tab[x + i, y + i].getValue())));
+            }
+            i++;
+
+        }
+        //déplacement haut/droite
+        i = 1;
+        while ((y - i) >= 0 && (x + i) < 8)
+        {
+
+            //prise ou colision
+            if (e.tab[x + i, y - i].getValue() != 0)
+            {
+                if (e.tab[x + i, y - i].getColor())
+                {
+                    e.LesCoups.Add(new Coups(this.position, tabCoord[(y - i) * 8 + x + i], (e.tab[x + i, y - i].getValue())));
+                    break;
+                }
+                else
+                {
+                    break;
+                }
+            }
+            else
+            {
+                e.LesCoups.Add(new Coups(this.position, tabCoord[(y - i) * 8 + x + i], (e.tab[x + i, y - i].getValue())));
+            }
+            i++;
+
+        }
+        //déplacement bas gauche
+        i = 1;
+        while ((y + i) < 8 && (x - i) >= 0)
+        {
+            //prise ou colision
+            if (e.tab[x - i, y + i].getValue() != 0)
+            {
+                if (e.tab[x - i, y + i].getColor())
+                {
+                    e.LesCoups.Add(new Coups(this.position, tabCoord[(y + i) * 8 + x - i], (e.tab[x - i, y + i].getValue())));
+                    break;
+                }
+                else
+                {
+                    break;
+                }
+            }
+            else
+            {
+                e.LesCoups.Add(new Coups(this.position, tabCoord[(y + i) * 8 + x - i], (e.tab[x - i, y + i].getValue())));
+            }
+            i++;
+
+        }
     }
 }
 
 public class Roi : Piece
 {
     public Roi(bool color, int x, int y, Echiquier e) : base(900, color, x, y, e) { }
-    public override string myPlays()
+    public override void myPlays()
     {
         string s = "";
 
@@ -878,17 +873,17 @@ public class Roi : Piece
                 {
                     if (e.tab[x + moveX, y + moveY].getColor())
                     {
-                        s += this.position + "," + tabCoord[(y + moveY) * 8 + x + moveX] + ';';
+                        e.LesCoups.Add(new Coups(this.position, tabCoord[(y + moveY) * 8 + x + moveX], (e.tab[x + moveX, y + moveY].getValue())));
 
                     }
                 }
                 else
                 {
-                    s += this.position + "," + tabCoord[(y + moveY) * 8 + x + moveX] + ';';
-                   
+                    e.LesCoups.Add(new Coups(this.position, tabCoord[(y + moveY) * 8 + x + moveX], (e.tab[x + moveX, y + moveY].getValue())));
+
 
                 }
         }
-        return s;
+        
     }
 }

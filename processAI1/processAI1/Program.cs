@@ -11,6 +11,17 @@ namespace processAI1
 {
     class Program
     {
+
+       /* public Coups minimax(int depth, Echiquier e, bool isMyTurn, Coups bestCoup)
+        {
+
+            if (depth == 0)
+            {
+                return 
+            }
+
+        }*/
+
        static void Main(string[] args)
         {
             try
@@ -64,50 +75,34 @@ namespace processAI1
                                 /******************************************************************************************************/
 
                                 
-                                List<String> mesPieces = new List<String>();
-                                for (int i = 0; i < tabVal.Length; i++)
-                                {
-                                    if (tabVal[i] > 0) mesPieces.Add(tabCoord[i]);
-                                }
-
-                                List<String> reste = new List<String>();
-                                for (int i = 0; i < tabVal.Length; i++)
-                                {
-                                    if (tabVal[i] <= 0) reste.Add(tabCoord[i]);
-                                    
-                                }
-
-                                //affichage du plateau
-                                for(int i = 0; i < tabVal.Length; i++)
-                                {
-                                    Console.Write(tabVal[i]+" ");
-                                    if (i % 8 == 0)
-                                        Console.WriteLine();
-                                }
-
+                               
                                 Echiquier e = new Echiquier(tabVal);
-                                string allTurn = e.playable();
+                                List<Coups> lesCoups = e.playable();
+
                                 
-                                allTurn = allTurn.Remove(allTurn.Length - 1, 1);
-                                Console.WriteLine(allTurn);
-                                allTurn = allTurn.Replace(";;", ";");
-                                allTurn = allTurn.TrimStart(';');
-                                
-                                List<string>allTurnList = allTurn.Split(';').ToList();
 
                                 Random rnd = new Random();
-                                //coord[0] = mesPieces[rnd.Next(mesPieces.Count)];
                                 
-                                string move = allTurnList[rnd.Next(allTurnList.Count)];
-                                while (!move.Contains(','))
+                                int r = rnd.Next(lesCoups.Count);
+                                
+                                Coups best = lesCoups[r];
+                                int BestValue = best.getValue();
+
+                                foreach (Coups c in lesCoups)
                                 {
-                                    move = allTurnList[rnd.Next(allTurnList.Count)];
+                                    if (c.getValue() > BestValue)
+                                    {
+                                        best = c;
+                                        BestValue = c.getValue();
+                                    }
                                 }
-                                Console.WriteLine(move);
-                                coord[0] = move.Split(',').ToList()[0];
-                                coord[1] = move.Split(',').ToList()[1];
-                                //coord[1] = tabCoord[rnd.Next(reste.Count)];
-                                //coord[2] = "P
+                                
+
+
+                                
+                                coord[0] = best.positionDepart;
+                                coord[1] = best.positionArrivee;
+                                
                                 
 
                                 

@@ -63,26 +63,17 @@ namespace processAI2
                                 /******************************************************************************************************/
 
                                 Echiquier e = new Echiquier(tabVal);
-                                string allTurn = e.playable();
+                                List<Coups> lesCoups = e.playable();
 
-                                allTurn = allTurn.Remove(allTurn.Length - 1, 1);
-                                Console.WriteLine(allTurn);
-                                allTurn = allTurn.Replace(";;", ";");
-                                allTurn = allTurn.TrimStart(';');
 
-                                List<string> allTurnList = allTurn.Split(';').ToList();
 
                                 Random rnd = new Random();
                                 //coord[0] = mesPieces[rnd.Next(mesPieces.Count)];
+                                int r = rnd.Next(lesCoups.Count);
+                                Coups move = lesCoups[r];
 
-                                string move = allTurnList[rnd.Next(allTurnList.Count)];
-                                while (!move.Contains(','))
-                                {
-                                    move = allTurnList[rnd.Next(allTurnList.Count)];
-                                }
-                                Console.WriteLine(move);
-                                coord[0] = move.Split(',').ToList()[0];
-                                coord[1] = move.Split(',').ToList()[1];
+                                coord[0] = move.positionDepart;
+                                coord[1] = move.positionArrivee;
 
                                 /********************************************************************************************************/
                                 /********************************************************************************************************/
