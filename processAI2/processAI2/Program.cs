@@ -62,24 +62,27 @@ namespace processAI2
                                 /***************************************** ECRIRE LE CODE DE L'IA *************************************/
                                 /******************************************************************************************************/
 
-                                List<String> mesPieces = new List<String>();
-                                for (int i = 0; i < tabVal.Length; i++)
-                                {
-                                    if (tabVal[i] < 0) mesPieces.Add(tabCoord[i]);
-                                }
+                                Echiquier e = new Echiquier(tabVal);
+                                string allTurn = e.playable();
 
-                                List<String> reste = new List<String>();
-                                for (int i = 0; i < tabVal.Length; i++)
-                                {
-                                    if (tabVal[i] <= 0) reste.Add(tabCoord[i]);
-                                }
+                                allTurn = allTurn.Remove(allTurn.Length - 1, 1);
+                                Console.WriteLine(allTurn);
+                                allTurn = allTurn.Replace(";;", ";");
+                                allTurn = allTurn.TrimStart(';');
+
+                                List<string> allTurnList = allTurn.Split(';').ToList();
 
                                 Random rnd = new Random();
-                                coord[0] = mesPieces[rnd.Next(mesPieces.Count)];
-                                //coord[0] = "petit roque";
-                                coord[1] = tabCoord[rnd.Next(reste.Count)];
-                                //coord[1] = "";
-                                //coord[2] = "";
+                                //coord[0] = mesPieces[rnd.Next(mesPieces.Count)];
+
+                                string move = allTurnList[rnd.Next(allTurnList.Count)];
+                                while (!move.Contains(','))
+                                {
+                                    move = allTurnList[rnd.Next(allTurnList.Count)];
+                                }
+                                Console.WriteLine(move);
+                                coord[0] = move.Split(',').ToList()[0];
+                                coord[1] = move.Split(',').ToList()[1];
 
                                 /********************************************************************************************************/
                                 /********************************************************************************************************/

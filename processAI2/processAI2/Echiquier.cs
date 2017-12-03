@@ -9,120 +9,7 @@ using System.Collections.Generic;
  */
 public class Echiquier
 {
-    private const int PP = 10; //pion passant
-    private const int P = 1; //pion
-    private const int TG = 21; //tour gauche (different pour le roque)
-    private const int TD = 22; //tour droite
-    private const int CG = 31; //cavalier gauche (différents pour l'image)
-    private const int CD = 32; //cavalier droit
-    private const int F = 4; //fou
-    private const int D = 5; //dame
-    private const int R = 6; //roi
-    public String[] tabCoord = new string[] { "a8","b8","c8","d8","e8","f8","g8","h8",
-                                                   "a7","b7","c7","d7","e7","f7","g7","h7",
-                                                   "a6","b6","c6","d6","e6","f6","g6","h6",
-                                                   "a5","b5","c5","d5","e5","f5","g5","h5",
-                                                   "a4","b4","c4","d4","e4","f4","g4","h4",
-                                                   "a3","b3","c3","d3","e3","f3","g3","h3",
-                                                   "a2","b2","c2","d2","e2","f2","g2","h2",
-                                                   "a1","b1","c1","d1","e1","f1","g1","h1" };
 
-
-    public Piece[,] tab;
-    List<Piece> mine = new List<Piece>();
-    List<String> coups = new List<string>();
-
-    public Echiquier() { }
-
-	public Echiquier(int[] tabVal)
-	{
-        tab = new Piece[8,8];
-        
-        for(int i = 0; i < tabVal.Length; i++)
-        {
-            int y = i >> 3; //optimisation
-            int x = (i & (8 - 1));
-            //match all white pawns
-            switch(tabVal[i])
-            {
-                case PP:
-                case P:
-                    tab[x, y] = new Pion(false,x,y,this);
-                    mine.Add(tab[x, y]);
-                    break;
-                case TG:
-                case TD:
-                    tab[x, y] = new Tour(false, x, y, this);
-                    mine.Add(tab[x, y]);
-                    break;
-
-                case CG:
-                case CD:
-                    tab[x, y] = new Cavalier(false, x, y, this);
-                    mine.Add(tab[x, y]);
-                    break;
-                case F:
-                    tab[x, y] = new Fou(false, x, y, this);
-                    mine.Add(tab[x, y]);
-                    break;
-                case D:
-                    tab[x, y] = new Dame(false, x, y, this);
-                    mine.Add(tab[x, y]);
-                    break;
-
-                case R:
-
-                    tab[x, y] = new Roi(false, x, y, this);
-                    mine.Add(tab[x, y]);
-                    break;
-
-                case -PP:
-                case -P:
-                    tab[x, y] = new PionNoir(true, x, y, this);
-                    break;
-                case -TG:
-                case -TD:
-                    tab[x, y] = new Tour(true, x, y, this);
-                    break;
-
-                case -CG:
-                case -CD:
-                    tab[x, y] = new Cavalier(true, x, y, this);
-                    break;
-                case -F:
-                    tab[x, y] = new Fou(true, x, y, this);
-                    break;
-                case -D:
-                    tab[x, y] = new Dame(true, x, y, this);
-                    break;
-                case -R:
-
-                    tab[x, y] = new Roi(true, x, y, this);
-                    break;
-
-                default:
-                    tab[x, y] = new Piece(0,true, x, y,this);
-                    break;
-            }
-            
-        }
-        Console.WriteLine(mine.Count);
-	}
-    public string playable()
-    {
-        string allPayableTurns = "";
-        foreach(Piece p in mine)
-        {
-
-            string tmp = p.myPlays();
-            if(tmp!="")
-                allPayableTurns += tmp + ";";
-        }
-        return allPayableTurns;
-    }
-}
-public class EchiquierNoir : Echiquier
-{
     private const int PP = 10; //pion passant
     private const int P = 1; //pion
     private const int TG = 21; //tour gauche (different pour le roque)
@@ -145,15 +32,15 @@ public class EchiquierNoir : Echiquier
     public Piece[,] tab;
     List<Piece> mine = new List<Piece>();
     List<String> coups = new List<string>();
-
-    public  EchiquierNoir(int[] tabVal) :base()
+    public Echiquier() { }
+    public Echiquier(int[] tabVal)
     {
         tab = new Piece[8, 8];
         int j = 0;
-        for (int i = tabVal.Length; i >=0 ; i--,j++)
+        for (int i = tabVal.Length-1; i >= 0; i--, j++)
         {
-            int y = j >> 3; //optimisation
-            int x = (j & (8 - 1));
+            int y = i >> 3; //optimisation
+            int x = (i & (8 - 1));
             //match all white pawns
             switch (tabVal[i])
             {
@@ -232,6 +119,121 @@ public class EchiquierNoir : Echiquier
         }
         return allPayableTurns;
     }
+   
+}
+public class EchiquierNoir : Echiquier
+{
+    private const int PP = 10; //pion passant
+    private const int P = 1; //pion
+    private const int TG = 21; //tour gauche (different pour le roque)
+    private const int TD = 22; //tour droite
+    private const int CG = 31; //cavalier gauche (différents pour l'image)
+    private const int CD = 32; //cavalier droit
+    private const int F = 4; //fou
+    private const int D = 5; //dame
+    private const int R = 6; //roi
+    public String[] tabCoord = new string[] { "a8","b8","c8","d8","e8","f8","g8","h8",
+                                                   "a7","b7","c7","d7","e7","f7","g7","h7",
+                                                   "a6","b6","c6","d6","e6","f6","g6","h6",
+                                                   "a5","b5","c5","d5","e5","f5","g5","h5",
+                                                   "a4","b4","c4","d4","e4","f4","g4","h4",
+                                                   "a3","b3","c3","d3","e3","f3","g3","h3",
+                                                   "a2","b2","c2","d2","e2","f2","g2","h2",
+                                                   "a1","b1","c1","d1","e1","f1","g1","h1" };
+
+
+    public Piece[,] tab;
+    List<Piece> mine = new List<Piece>();
+    List<String> coups = new List<string>();
+
+    
+
+    public EchiquierNoir(int[] tabVal) :base()
+    {
+        tab = new Piece[8, 8];
+
+        for (int i = 0; i < tabVal.Length; i++)
+        {
+            int y = i >> 3; //optimisation
+            int x = (i & (8 - 1));
+            //match all white pawns
+            switch (tabVal[i])
+            {
+                case PP:
+                case P:
+                    tab[x, y] = new Pion(false, x, y, this);
+                    mine.Add(tab[x, y]);
+                    break;
+                case TG:
+                case TD:
+                    tab[x, y] = new Tour(false, x, y, this);
+                    mine.Add(tab[x, y]);
+                    break;
+
+                case CG:
+                case CD:
+                    tab[x, y] = new Cavalier(false, x, y, this);
+                    mine.Add(tab[x, y]);
+                    break;
+                case F:
+                    tab[x, y] = new Fou(false, x, y, this);
+                    mine.Add(tab[x, y]);
+                    break;
+                case D:
+                    tab[x, y] = new Dame(false, x, y, this);
+                    mine.Add(tab[x, y]);
+                    break;
+
+                case R:
+
+                    tab[x, y] = new Roi(false, x, y, this);
+                    mine.Add(tab[x, y]);
+                    break;
+
+                case -PP:
+                case -P:
+                    tab[x, y] = new PionNoir(true, x, y, this);
+                    break;
+                case -TG:
+                case -TD:
+                    tab[x, y] = new Tour(true, x, y, this);
+                    break;
+
+                case -CG:
+                case -CD:
+                    tab[x, y] = new Cavalier(true, x, y, this);
+                    break;
+                case -F:
+                    tab[x, y] = new Fou(true, x, y, this);
+                    break;
+                case -D:
+                    tab[x, y] = new Dame(true, x, y, this);
+                    break;
+                case -R:
+
+                    tab[x, y] = new Roi(true, x, y, this);
+                    break;
+
+                default:
+                    tab[x, y] = new Piece(0, true, x, y, this);
+                    break;
+            }
+
+        }
+        Console.WriteLine(mine.Count);
+    }
+    public string playable()
+    {
+        string allPayableTurns = "";
+        foreach (Piece p in mine)
+        {
+
+            string tmp = p.myPlays();
+            if (tmp != "")
+                allPayableTurns += tmp + ";";
+        }
+        return allPayableTurns;
+    }
 }
 
 /*
@@ -262,9 +264,9 @@ public class Piece
                                                    "a3","b3","c3","d3","e3","f3","g3","h3",
                                                    "a2","b2","c2","d2","e2","f2","g2","h2",
                                                    "a1","b1","c1","d1","e1","f1","g1","h1" };
-    
 
-    public Piece(int value, bool color, int x, int y,Echiquier e)
+
+    public Piece(int value, bool color, int x, int y, Echiquier e)
     {
         this.value = value;
         this.color = color;
@@ -297,33 +299,34 @@ public class Piece
  */
 public class Pion : Piece
 {
-    public Pion(bool color, int x, int y, Echiquier e) : base (10, color,x,y,e)
+    public Pion(bool color, int x, int y, Echiquier e) : base(10, color, x, y, e)
     {
-        
+
     }
     //Retourne tous les mouvements possible d'un pion 
     public override string myPlays()
     {
-        
-        if (y > 0 ) {
-            Console.WriteLine(x+","+y);
-            string s ="";
 
-            if (e.tab[x,y-1].getValue()==0) //pion vers le haut
-                s += this.position+ "," + tabCoord[(y - 1 )* 8 + x];
+        if (y > 0)
+        {
+            Console.WriteLine(x + "," + y);
+            string s = "";
+
+            if (e.tab[x, y - 1].getValue() == 0) //pion vers le haut
+                s += this.position + "," + tabCoord[(y - 1) * 8 + x];
             try
             {
                 if (e.tab[x - 1, y - 1].getColor() && e.tab[x - 1, y - 1].getValue() > 0)//prise vers la gauche
                 {
-                    s += ";" + this.position + ',' + tabCoord[(y - 1 )* 8 + x - 1];
-            }
+                    s += ";" + this.position + ',' + tabCoord[(y - 1) * 8 + x - 1];
+                }
             }
             catch (Exception e) { }
             try
             {
-                if (e.tab[x + 1, y - 1].getColor()&& e.tab[x + 1, y - 1].getValue()>0)//prise vers la droite
+                if (e.tab[x + 1, y - 1].getColor() && e.tab[x + 1, y - 1].getValue() > 0)//prise vers la droite
                 {
-                    s += ";" + this.position + ',' + tabCoord[(y - 1 )* 8 + x + 1];
+                    s += ";" + this.position + ',' + tabCoord[(y - 1) * 8 + x + 1];
                 }
             }
             catch (Exception e) { }
@@ -342,7 +345,7 @@ public class PionNoir : Piece
     public override string myPlays()
     {
 
-        if (y < 7)
+        if (y <7 )
         {
             Console.WriteLine(x + "," + y);
             string s = "";
@@ -373,7 +376,7 @@ public class PionNoir : Piece
 
 public class Tour : Piece
 {
-    public Tour(bool color, int x, int y, Echiquier e): base(50, color, x, y, e) { }
+    public Tour(bool color, int x, int y, Echiquier e) : base(50, color, x, y, e) { }
 
     public override string myPlays()
     {
@@ -382,12 +385,13 @@ public class Tour : Piece
         int i = 1;
         while ((x - i) >= 0)
         {
-            
+
             //prise ou colision
 
             if (e.tab[x - i, y].getValue() != 0)
             {
-                if(e.tab[x - i, y].getColor()){
+                if (e.tab[x - i, y].getColor())
+                {
                     s += this.position + "," + tabCoord[(y) * 8 + x - i] + ';';
                     break;
                 }
@@ -408,7 +412,7 @@ public class Tour : Piece
         i = 1;
         while ((x + i) < 8)
         {
-            
+
             //prise ou colision
             if (e.tab[x + i, y].getValue() != 0)
             {
@@ -424,7 +428,7 @@ public class Tour : Piece
             }
             else
             {
-                s += this.position + "," + tabCoord[(y) * 8 + x + i]+';';
+                s += this.position + "," + tabCoord[(y) * 8 + x + i] + ';';
             }
             i++;
 
@@ -433,13 +437,13 @@ public class Tour : Piece
         i = 1;
         while ((y - i) >= 0)
         {
-            
+
             //prise ou colision
-            if (e.tab[x , y-i].getValue() != 0)
+            if (e.tab[x, y - i].getValue() != 0)
             {
-                if (e.tab[x, y-i].getColor())
+                if (e.tab[x, y - i].getColor())
                 {
-                    s += this.position + "," + tabCoord[(y-i) * 8 + x] + ';';
+                    s += this.position + "," + tabCoord[(y - i) * 8 + x] + ';';
                     break;
                 }
                 else
@@ -449,7 +453,7 @@ public class Tour : Piece
             }
             else
             {
-                s += this.position + "," + tabCoord[(y-i) * 8 + x] + ';';
+                s += this.position + "," + tabCoord[(y - i) * 8 + x] + ';';
             }
             i++;
 
@@ -473,7 +477,7 @@ public class Tour : Piece
             }
             else
             {
-                s += this.position + "," + tabCoord[(y+i) * 8 + x] + ';';
+                s += this.position + "," + tabCoord[(y + i) * 8 + x] + ';';
             }
             i++;
 
@@ -512,7 +516,7 @@ public class Cavalier : Piece
                     if (e.tab[x + moveX, y + moveY].getColor())
                     {
                         s += this.position + "," + tabCoord[(y + moveY) * 8 + x + moveX] + ';';
-                        
+
                     }
                 }
                 else
@@ -540,11 +544,11 @@ public class Fou : Piece
 
             //prise ou colision
 
-            if (e.tab[x - i, y-i].getValue() != 0)
+            if (e.tab[x - i, y - i].getValue() != 0)
             {
-                if (e.tab[x - i, y-i].getColor())
+                if (e.tab[x - i, y - i].getColor())
                 {
-                    s += this.position + "," + tabCoord[(y-i) * 8 + x - i] + ';';
+                    s += this.position + "," + tabCoord[(y - i) * 8 + x - i] + ';';
                     break;
                 }
                 else
@@ -554,7 +558,7 @@ public class Fou : Piece
             }
             else
             {
-                s += this.position + "," + tabCoord[(y-i) * 8 + x - i] + ';';
+                s += this.position + "," + tabCoord[(y - i) * 8 + x - i] + ';';
             }
 
             i++;
@@ -566,11 +570,11 @@ public class Fou : Piece
         {
 
             //prise ou colision
-            if (e.tab[x + i, y+i].getValue() != 0)
+            if (e.tab[x + i, y + i].getValue() != 0)
             {
-                if (e.tab[x + i, y+i].getColor())
+                if (e.tab[x + i, y + i].getColor())
                 {
-                    s += this.position + "," + tabCoord[(y+i) * 8 + x + i] + ';';
+                    s += this.position + "," + tabCoord[(y + i) * 8 + x + i] + ';';
                     break;
                 }
                 else
@@ -580,7 +584,7 @@ public class Fou : Piece
             }
             else
             {
-                s += this.position + "," + tabCoord[(y+i) * 8 + x + i] + ';';
+                s += this.position + "," + tabCoord[(y + i) * 8 + x + i] + ';';
             }
             i++;
 
@@ -591,11 +595,11 @@ public class Fou : Piece
         {
 
             //prise ou colision
-            if (e.tab[x+i, y - i].getValue() != 0)
+            if (e.tab[x + i, y - i].getValue() != 0)
             {
-                if (e.tab[x+i, y - i].getColor())
+                if (e.tab[x + i, y - i].getColor())
                 {
-                    s += this.position + "," + tabCoord[(y - i) * 8 + x+i] + ';';
+                    s += this.position + "," + tabCoord[(y - i) * 8 + x + i] + ';';
                     break;
                 }
                 else
@@ -605,7 +609,7 @@ public class Fou : Piece
             }
             else
             {
-                s += this.position + "," + tabCoord[(y - i) * 8 + x+i] + ';';
+                s += this.position + "," + tabCoord[(y - i) * 8 + x + i] + ';';
             }
             i++;
 
@@ -615,11 +619,11 @@ public class Fou : Piece
         while ((y + i) < 8 && (x - i) >= 0)
         {
             //prise ou colision
-            if (e.tab[x-i, y + i].getValue() != 0)
+            if (e.tab[x - i, y + i].getValue() != 0)
             {
                 if (e.tab[x, y + i].getColor())
                 {
-                    s += this.position + "," + tabCoord[(y + i) * 8 + x-i] + ';';
+                    s += this.position + "," + tabCoord[(y + i) * 8 + x - i] + ';';
                     break;
                 }
                 else
@@ -629,7 +633,7 @@ public class Fou : Piece
             }
             else
             {
-                s += this.position + "," + tabCoord[(y + i) * 8 + x-i] + ';';
+                s += this.position + "," + tabCoord[(y + i) * 8 + x - i] + ';';
             }
             i++;
 
@@ -885,7 +889,7 @@ public class Roi : Piece
                 else
                 {
                     s += this.position + "," + tabCoord[(y + moveY) * 8 + x + moveX] + ';';
-                   
+
 
                 }
         }
