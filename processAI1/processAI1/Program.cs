@@ -12,22 +12,22 @@ namespace processAI1
     class Program
     {
 
-       /* public Coups minimax(int depth, Echiquier e, bool isMyTurn, Coups bestCoup)
-        {
+        /* public Coups minimax(int depth, Echiquier e, bool isMyTurn, Coups bestCoup)
+         {
 
-            if (depth == 0)
-            {
-                return 
-            }
+             if (depth == 0)
+             {
+                 return 
+             }
 
-        }*/
+         }*/
 
-            static Coups findBestMove(Echiquier e)
+        static Coups findBestMove(Echiquier e)
         {
             List<Coups> lesCoups = e.playable();
-            
 
-            
+
+
             List<Coups> best = new List<Coups>();
             int BestValue = -900000;
             foreach (Coups c in lesCoups)
@@ -67,85 +67,7 @@ namespace processAI1
             return best[r];
         }
 
-        
-
-        static int minimax2(int depth, Echiquier e,int alpha,int beta, Boolean player)
-        {
-
-            if(depth == 0)
-            {
-                return e.evaluate();
-            }
-            if (player)
-            {
-                int bestValue = -9000;
-                List<Coups> lesCoups = e.playable();
-                foreach(Coups c in lesCoups)
-                {
-                    e.playMove(c);
-                    bestValue = Math.Max(bestValue, minimax2(depth - 1, e,alpha,beta, !player));
-                    e.undo();
-                    alpha = Math.Max(alpha, bestValue);
-                    if (beta <= alpha)
-                    {
-                        return bestValue;
-                    }
-                }
-                return bestValue;
-            }
-            else
-            {
-                int bestValue = 9000;
-                List<Coups> lesCoups = e.playableAdversary();
-                foreach (Coups c in lesCoups)
-                {
-                    e.playMove(c);
-                    bestValue = Math.Min(bestValue, minimax2(depth - 1, e, alpha, beta, !player));
-                    e.undo();
-                    beta = Math.Min(beta, bestValue);
-                    if (beta <= alpha)
-                    {
-                        return bestValue;
-                    }
-                }
-                return bestValue;
-            }
-
-        }
-
-        static Coups minimaxFirst(int depth, Echiquier e, Boolean player)
-        {
-            int bestValue = -9000;
-            Coups leBest = null;
-            List<Coups> lesCoups = e.playable();
-            foreach (Coups c in lesCoups)
-            {
-                e.playMove(c);
-                int value =  minimax2(depth - 1, e, -10000, 10000, !player);
-                e.undo();
-                if(value > bestValue)
-                {
-                    leBest = c;
-                    bestValue = value;
-                }
-                if (value == bestValue)
-                {
-                    Random rand = new Random();
-                    if (rand.Next(0, 2) == 0)
-                    {
-                        leBest = c;
-                        bestValue = value;
-                    }
-                    
-                }
-            }
-            return leBest;
-        }
-
-
-        
-
-       static void Main(string[] args)
+        static void Main(string[] args)
         {
             try
             {
@@ -199,21 +121,10 @@ namespace processAI1
 
 
                                 Coups best;
-                                Echiquier e = new Echiquier(tabVal);
-
-
-                                /* if (e.yours.Count() >3)
-                                 {
-                                     best = minimax(2, e, true, null);
-                                 }
-                                 else
-                                 {
-                                     best = minimax(3, e, true, null);
-                                 }*/
-                                 if(e.yours.Count()<3)
-                                    best = minimaxFirst(3, e, true);
-                                 else
-                                    best = minimaxFirst(2, e, true);
+                                Agent a = new Agent();
+                                a.Percept(tabVal);
+                                a.SearchBestMove();
+                                best = a.joue();
                                     
 
 
