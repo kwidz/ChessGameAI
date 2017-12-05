@@ -62,16 +62,22 @@ namespace processAI2
                                 /***************************************** ECRIRE LE CODE DE L'IA *************************************/
                                 /******************************************************************************************************/
 
+
+                                //Commenter le code si dessous pour jouer en ia 
+
                                 Echiquier e = new Echiquier(tabVal);
                                 List<Coups> lesCoups = e.playable();
-
-
-
                                 Random rnd = new Random();
-                                //coord[0] = mesPieces[rnd.Next(mesPieces.Count)];
                                 int r = rnd.Next(lesCoups.Count);
                                 Coups move = lesCoups[r];
 
+                                /************************************
+
+                                Agent a = new Agent();
+                                a.Percept(tabVal);
+                                a.SearchBestMove();
+                                Coups move = a.joue();
+                                */
                                 coord[0] = move.positionDepart;
                                 coord[1] = move.positionArrivee;
 

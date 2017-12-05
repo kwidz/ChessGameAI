@@ -41,22 +41,28 @@ public class Echiquier
 
     public int evaluate()
     {
+        
         int evaluation = 0;
-        for(int i = 0; i<8; i++)
-        {
-            for(int j=0; j<8; j++)
-            {
-                if (!tab[i, j].getColor())
-                {
-                    evaluation += tab[i, j].getValue();
-                }
-                else
-                {
-                    evaluation -= tab[i, j].getValue();
-                }
-            }
-        }
-        Console.WriteLine(evaluation);
+        foreach (Piece p in mine)
+            evaluation += p.getValue();
+        foreach (Piece p in yours)
+            evaluation += p.getValue();
+
+        /* for(int i = 0; i<8; i++)
+         {
+             for(int j=0; j<8; j++)
+             {
+                 if (!tab[i, j].getColor())
+                 {
+                     evaluation += tab[i, j].getValue();
+                 }
+                 else
+                 {
+                     evaluation -= tab[i, j].getValue();
+                 }
+             }
+         }*/
+        //Console.WriteLine(evaluation);
         return evaluation;
     }
 

@@ -120,15 +120,22 @@ namespace processAI1
                                 /******************************************************************************************************/
 
 
-                                Coups best;
-                                Agent a = new Agent();
-                                a.Percept(tabVal);
-                                a.SearchBestMove();
-                                best = a.joue();
-                                    
+                                 Coups best;
+                                 Agent a = new Agent();
+                                 a.Percept(tabVal);
+                                 a.SearchBestMove();
+                                 best = a.joue();
+                                  
+                                  /*
+                                   * Code jeu random
+                                Echiquier e = new Echiquier(tabVal);
+                                List<Coups> lesCoups = e.playable();
+                                Random rnd = new Random();
+                                int r = rnd.Next(lesCoups.Count);
+                                Coups best = lesCoups[r];
+                                */
 
 
-                                
                                 coord[0] = best.positionDepart;
                                 coord[1] = best.positionArrivee;
                                 coord[2] = "D";

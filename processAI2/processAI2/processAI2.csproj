@@ -43,7 +43,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Desires.cs" />
+    <Compile Include="Agent.cs" />
+    <Compile Include="Coups.cs" />
     <Compile Include="Echiquier.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
